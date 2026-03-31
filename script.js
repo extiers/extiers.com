@@ -1,8 +1,7 @@
-document.addEventListener("DOMContentLoaded", () => {
-
+// == GLOBAL SETTINGS ==
 const PASSWORD = "4953";
 
-/* Игроки — по 1 на фильтр */
+// Игроки по фильтрам
 let playersData = {
   all: [{name:"PlayerOverall", avatar:"", region:"na"}],
   tgk: [{name:"PlayerTGK", avatar:"", region:"eu"}],
@@ -10,9 +9,12 @@ let playersData = {
   rich: [{name:"PlayerRich", avatar:"", region:"eu"}]
 };
 
+// Текущий фильтр
 let filter = "all";
 
-/* Рендер раздела */
+// ======================
+// РЕНДЕР СПИСКА
+// ======================
 function render() {
   const list = document.getElementById("list");
   list.innerHTML = "";
@@ -38,50 +40,71 @@ function render() {
   });
 }
 
-/* Фильтры */
-window.setFilter = function(f, el) {
+// ======================
+// ФИЛЬТРЫ
+// ======================
+function setFilter(f, el) {
   filter = f;
   document.querySelectorAll(".filter").forEach(x => x.classList.remove("active"));
   el.classList.add("active");
   render();
 }
 
-/* MENU */
-window.toggleMenu = function() {
+// ======================
+// МЕНЮ
+// ======================
+function toggleMenu() {
   const menu = document.getElementById("menu");
   menu.style.display = (menu.style.display === "flex") ? "none" : "flex";
 }
 
-/* ADMIN */
-window.openAdmin = function() {
+// ======================
+// ADMIN
+// ======================
+function openAdmin() {
   document.getElementById("admin").style.display = "flex";
 }
-window.closeAdmin = function() {
+function closeAdmin() {
   document.getElementById("admin").style.display = "none";
 }
-window.login = function() {
+function login() {
   if(document.getElementById("pass").value === PASSWORD){
     document.getElementById("adminContent").style.display = "block";
   } else alert("wrong password");
 }
 
-/* TG COPY */
-window.copyTG = function() {
+// ======================
+// КОПИРОВАНИЕ TG
+// ======================
+function copyTG() {
   const text = "https://t.me/exetiqueik";
-  navigator.clipboard?.writeText(text)
-    .then(()=> alert("Скопировано!"))
-    .catch(()=>{
-      const textarea = document.createElement("textarea");
-      textarea.value = text;
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textarea);
-      alert("Скопировано!");
-    });
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(()=> alert("Скопировано!"));
+  } else {
+    // fallback для старых браузеров
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textarea);
+    alert("Скопировано!");
+  }
 }
 
-/* INIT */
-render();
-
+// ======================
+// ИНИЦИАЛИЗАЦИЯ
+// ======================
+window.addEventListener("DOMContentLoaded", ()=>{
+  render();
 });
+
+// ======================
+// СДЕЛАТЬ ДОСТУПНЫМИ В ГЛОБАЛЬНОМ КОНТЕКСТЕ (HTML onclick)
+// ======================
+window.setFilter = setFilter;
+window.toggleMenu = toggleMenu;
+window.openAdmin = openAdmin;
+window.closeAdmin = closeAdmin;
+window.login = login;
+window.copyTG = copyTG;
